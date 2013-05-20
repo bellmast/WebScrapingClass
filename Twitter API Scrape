@@ -1,13 +1,14 @@
 # Twitter API Follow(ing) Matrix Producer (comma delimited) # Jzbm # May 20, 2013
 # Comments wherever there are things you need to change specific to your needs
+# Copy/paste the output into excel, using text import wizard or text-to-columns to delimit by commas
 
 import twitter
 import csv
 from time import sleep
 import cPickle as pickle
 
-usersHeader = 'usernames' # whatever column header you have, where the usernames are
-filename = 'Survey13-05-15_KC.csv' # filename
+usersHeader = '<<<<yourcolumnheader>>>>' # whatever column header you have, where the usernames are
+filename = '<<<<yourfilename>>>>.csv' # filename
 
 twitterFile = csv.reader(open(filename, 'r'))
 
@@ -21,7 +22,7 @@ for row in twitterFile:
     currentUser = row[usersColumn].strip()
     userList.append(currentUser)
 
-api = twitter.Api(consumer_key='4S6poonNzM7iuy1dzUcZgQ', consumer_secret='0nAMoxAJlK4qCRVuPnDvBkTXL6bIkjlMC1ByzYmPrc', access_token_key='1410743269-FO3cqrpIlfkcdRON2sTYwzrjG8PAoKiLFcdKJbG', access_token_secret='44d0KWNNicAm3zsOPjkl5ViwBYktR60bP5xGyhbWUI')
+api = twitter.Api(consumer_key='<<<<>>>>>', consumer_secret='<<<<<>>>>>>', access_token_key='<<<<<<>>>>>>>', access_token_secret='<<<<<<>>>>>>')
 # use your own consumer_key, secret, access_token & secret
 
 def rate_monitor():
@@ -51,6 +52,8 @@ for n in userList:
         print 'Page Does Not Exist or Locked'
         continue
     for f in friends:
+       #rate_monitor()
+       #take this rate_monitor() call out if you need extra speed, and are confident that you won't run over Twitter's call limit 
         friendName = f.screen_name
         print friendName
         if friendName in userList:
@@ -59,7 +62,7 @@ for n in userList:
                 mutualities[n].append(friendName)
             else:
                 mutualities[n] = [friendName]
-    pickle.dump(mutualities, open("C:\Users\jbell-masterson\Documents\Code\Survey13-05-15_KC_Run_May-20.p", "wb"))    
+    pickle.dump(mutualities, open("C:\<<<Users?>>>\<<<someUser>>>\<<<Documents?>>>\<<<FolderForPickles?>>>\<<<yourpicklename>>>.p", "wb"))    
     # pickle to an appropriate path; useful if your code gets interrupted, you can pick up where you left off by loading the pickle at the start
     
 ######### If you want a matrix with invalid/locked users, but N/A in their appropriate columns, just remove this bit of code
@@ -138,5 +141,3 @@ for a in userList:
                     elif y not in mutualities[a]:
                         print '0,',
         print ''
-
-print api.GetRateLimitStatus()
