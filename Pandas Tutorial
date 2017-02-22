@@ -1,0 +1,145 @@
+import pandas as pd
+import numpy as np
+
+## Load data from a url
+df = pd.read_csv("https://piazza.com/class_profile/get_resource/ixiudyq1m7bj0/iyrkd9aa8xl4a4")
+## Or from your computer
+yourPath = 'C:\Users\jbellmas\Documents\Kauffman drive\Code\\'
+filename = "df_example_test_philly_crime.csv"
+df = pd.read_csv(yourPath+filename)
+
+########################
+####Explorationnnnn#####
+########################
+
+## Calling df will just return first 30 and last 30 rows, all columns
+df
+## Let's take a look at the size of this thing, and the datatypes
+df.info()
+## Can also just look at datatypes alone
+df.dtypes
+
+## Now let's peek into it: df.head() returns first five rows, bit easier to see
+df.head()
+## We can pass a value to return a different number of rows, if we want...
+df.head(3)
+
+## How about some summary statistics?
+df.describe()
+
+## Okay let's just look at one column
+df['District']
+df['District'].head()
+df['District'].tail()
+## A more specific slice?
+df['District'][250:255]
+## Some simple counts?
+df['District'].value_counts()
+## Summary stats?
+x = df['District']
+x.max()
+x.min()
+x.mean()
+x.median()
+x.mode()
+x.value_counts()
+
+## How about multiple columns?  Just need [[]]
+df[['District', 'X', 'Y']].head()
+df[['District', 'X', 'Y']][250:255]
+## This next bit will error!
+# df[['District', 'X', 'Y']].value_counts()
+
+
+## We can use iloc to take finer slices
+df['District'].head(10)
+df['District'][0:10]
+df['District'].iloc[0:11]
+
+## Same result above... why do this?
+df[['District', 'X', 'Y']][250:255]
+df[['District', 'X', 'Y']].iloc[250:255]
+## Well... we can also slice by column, simultaneously!
+df[['District', 'X', 'Y']].iloc[250:255, 0:2]
+df[['District', 'X', 'Y']].iloc[250:255, 2]
+## Likewise, with the whole df
+df.iloc[250:255, 5:8]
+
+## Okay now let's filter
+## district_3 = df[(df['District'] == '3')]
+## The above doesn't work!  Data-types need to match
+district_3 = df[(df['District'] == 3)]
+district_3.head()
+district_3.info()
+
+## Multiple filters!  Note the &
+district_3_thefts = df[(df['District'] == 3) & (df['Category'] == 'Thefts')]
+district_3_thefts.head()
+## Can also do or, with |
+district_3_thefts = df[(df['District'] == 3) | (df['Category'] == 'Thefts')]
+district_3_thefts.head()
+## What about combining with summary stats...?
+dist_lowend = df[(df['District'] < df['District'].median())]
+dist_lowend.info()
+dist_lowend.head()
+dist_lowend['District'].max()
+
+
+## Can we drop columns?  Sure can!
+## Axis is just 0 when we drop rows, 1 when we drop columns
+no_district = df.drop('District', axis=1)
+
+## Say we want to create a new column?  Easy.
+df['ddddddddd'] = df['District']
+df.info()
+df.head()
+## Ehhh let's get rid of that ridiculousness
+df.drop('ddddddddd', axis=1)
+## Wait!  It's still there!  Hold on...
+df.drop('ddddddddd', axis=1, inplace=True)
+## There we go.
+
+## More interesting columns to create?
+df['xyTogetherAtLast'] = df['X']*df['Y']
+df['logY'] = np.log(df['Y'])
+df['xSq'] = np.square(df['X'])
+
+## How about dropping rows?
+## axis defaults to 0, so we don't have to specify
+no_row_one = df.drop(df.index[3])
+df.head()
+no_row_one.head()
+
+## What about deleting duplicates?
+## Same thing regards "inplace=True" so you can't screw up too bad
+df.drop_duplicates('District', keep='first')
+df.info()
+dedup = df.drop_duplicates('District', keep='first')
+dedup.info()
+dedup
+
+## Okay what if we want to mess with datatypes?
+df.info()
+df['Hour'] = pd.to_datetime(df['Hour'])
+df.info()
+df['District'] = df['District'].astype('category')
+df.info()
+df['District'].head()
+
+## How about sorting our dataset by a column?
+df.head()
+df.sort_values('District').head()
+df.sort_values('District', ascending=False).head()
+## Remove head() if you change the dataset or you'll have a df of 5 entries!
+df = df.sort_values('District', ascending=False)
+
+
+## Okay finally for today, what about correlations, models, etc.?
+df[['X', 'Y']].corr()
+## We'll look at models next time, with a different dataset
+
+## To close out, we can write back to .csv to save on our machine
+yourPath = 'C:\Users\jbellmas\Documents\Kauffman drive\Code\\'
+filename = "df_example_test_philly_crime.csv"
+df.to_csv(yourPath+filename)
+
